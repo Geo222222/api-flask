@@ -70,24 +70,31 @@ def womens_empowerment_news():
 @app.route("/api/crypto-ticker")
 def crypto_ticker():
     try:
-        url = "https://api.coingecko.com/api/v3/simple/price"
+        url = "https://api.coingecko.com/api/v3/coins/markets"
         params = {
-            "ids": "bitcoin,ethereum,solana,cardano,dogecoin",
-            "vs_currencies": "usd"
+            "vs_currency": "usd",
+            "order": "market_cap_desc",
+            "per_page": 20,
+            "page": 1,
+            "price_change_percentage": "1h"
         }
         response = requests.get(url, params=params)
         response.raise_for_status()
-        prices = response.json()
+        coins = response.json()
 
-        return jsonify([
-            {"symbol": "BTC", "price": prices["bitcoin"]["usd"]},
-            {"symbol": "ETH", "price": prices["ethereum"]["usd"]},
-            {"symbol": "SOL", "price": prices["solana"]["usd"]},
-            {"symbol": "ADA", "price": prices["cardano"]["usd"]},
-            {"symbol": "DOGE", "price": prices["dogecoin"]["usd"]}
-        ])
+        result = []
+        for coin in coins:
+            result.append({
+                "symbol": coin["symbol"].upper(),
+                "price": coin["current_price"],
+                "change_1h": coin.get("price_change_percentage_1h_in_currency", 0.0)
+            })
+
+        return jsonify(result)
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/api/inspiration')
 def get_inspiration():
