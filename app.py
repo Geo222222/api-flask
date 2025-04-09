@@ -1,12 +1,11 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import requests
 from flask_cors import CORS
 import os
 
 app = Flask(__name__)
-CORS(app)  # Allows cross-origin requests from frontend (e.g., GitHub Pages)
+CORS(app)
 
-# Get the News API key securely from environment variables
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 
 @app.route("/")
@@ -30,7 +29,6 @@ def get_tech_news():
         response = requests.get(url, params=params)
         response.raise_for_status()
         articles = response.json().get("articles", [])
-
         return jsonify([
             {
                 "title": article.get("title", "No Title"),
@@ -41,7 +39,37 @@ def get_tech_news():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/api/crypto-ticker")
+def crypto_ticker():
+    try:
+        url = "https://api.coingecko.com/api/v3/simple/price"
+        params = {
+            "ids": "bitcoin,ethereum,solana,cardano,dogecoin",
+            "vs_currencies": "usd"
+        }
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        prices = response.json()
 
+        return jsonify([
+            {"symbol": "BTC", "price": prices["bitcoin"]["usd"]},
+            {"symbol": "ETH", "price": prices["ethereum"]["usd"]},
+            {"symbol": "SOL", "price": prices["solana"]["usd"]},
+            {"symbol": "ADA", "price": prices["cardano"]["usd"]},
+            {"symbol": "DOGE", "price": prices["dogecoin"]["usd"]}
+        ])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/inspiration')
+def get_inspiration():
+    # Example: Get an inspirational quote
+    response = requests.get("https://zenquotes.io/api/random")
+    data = response.json()
+    quote = data[0]["q"]
+    author = data[0]["a"]
+    return jsonify({"quote": quote, "author": author})
+    
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))  # 2 Options: Use PORT env var or default port 10000
+    port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
