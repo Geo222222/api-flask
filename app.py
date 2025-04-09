@@ -87,7 +87,7 @@ def crypto_ticker():
             result.append({
                 "symbol": coin["symbol"].upper(),
                 "price": coin["current_price"],
-                "change_1h": coin.get("price_change_percentage_1h_in_currency", 0.0)
+                "change_1h": coin.get("price_change_percentage_1h_in_currency", 0.0"%")
             })
 
         return jsonify(result)
