@@ -39,6 +39,34 @@ def get_tech_news():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/api/womens-empowerment")
+def womens_empowerment_news():
+    if not NEWS_API_KEY:
+        return jsonify({"error": "API key is not set."}), 500
+
+    url = "https://newsapi.org/v2/everything"
+    params = {
+        "q": "women empowerment OR women leadership OR mentoring young women",
+        "language": "en",
+        "sortBy": "publishedAt",
+        "pageSize": 5,
+        "apiKey": NEWS_API_KEY
+    }
+
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        articles = response.json().get("articles", [])
+        return jsonify([
+            {
+                "title": article.get("title", "No Title"),
+                "url": article.get("url", "#")
+            }
+            for article in articles
+        ])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route("/api/crypto-ticker")
 def crypto_ticker():
     try:
