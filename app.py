@@ -43,5 +43,5 @@ def get_tech_news():
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # 2 Options: Use PORT env var or default port 5000
+    port = int(os.environ.get("PORT", 10000))  # 2 Options: Use PORT env var or default port 10000
     app.run(host="0.0.0.0", port=port)
