@@ -114,9 +114,9 @@ def summarize():
             return jsonify({"error": "Input text is too short."}), 400
 
         api_url = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
-        headers = {"Authorization": "Bearer hf_xxx"}  # Optional: Use your HuggingFace token
+        headers = {}  # No token, anonymous access
         payload = {"inputs": text[:1024]}  # truncate for model input size
-
+        # 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 justincase
         response = requests.post(api_url, headers=headers, json=payload)
         response.raise_for_status()
 
@@ -129,7 +129,7 @@ def summarize():
 @app.route("/api/blog-feed")
 def blog_feed():
     try:
-        username = "Mads Stoumann"  # user name here
+        username = "madsstoumann"  # user name here
         url = f"https://dev.to/api/articles?username={username}&per_page=6"
         response = requests.get(url)
         response.raise_for_status()
