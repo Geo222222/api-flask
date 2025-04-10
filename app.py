@@ -95,7 +95,6 @@ def crypto_ticker():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 @app.route('/api/inspiration')
 def get_inspiration():
     # Example: Get an inspirational quote
@@ -104,7 +103,29 @@ def get_inspiration():
     quote = data[0]["q"]
     author = data[0]["a"]
     return jsonify({"quote": quote, "author": author})
-    
+
+@app.route("/api/summarize", methods=["POST"])
+def summarize():
+    try:
+        data = request.get_json()
+        text = data.get("text", "")
+
+        if not text or len(text.strip()) < 20:
+            return jsonify({"error": "Input text is too short."}), 400
+
+        api_url = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
+        headers = {"Authorization": "Bearer hf_xxx"}  # Optional: Use your HuggingFace token
+        payload = {"inputs": text[:1024]}  # truncate for model input size
+
+        response = requests.post(api_url, headers=headers, json=payload)
+        response.raise_for_status()
+
+        summary = response.json()[0]["summary_text"]
+        return jsonify({"summary": summary})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
