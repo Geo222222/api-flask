@@ -20,7 +20,7 @@ def get_tech_news():
 
     url = "https://newsapi.org/v2/top-headlines"
     params = {
-        "category": "technology",
+        "category": "fintech",
         "language": "en",
         "pageSize": 5,
         "apiKey": NEWS_API_KEY
