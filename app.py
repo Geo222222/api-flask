@@ -126,6 +126,28 @@ def summarize():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/api/blog-feed")
+def blog_feed():
+    try:
+        username = "your_devto_username"  # Replace this
+        url = f"https://dev.to/api/articles?username={username}&per_page=6"
+        response = requests.get(url)
+        response.raise_for_status()
+
+        articles = response.json()
+        result = [
+            {
+                "title": a["title"],
+                "url": a["url"],
+                "description": a["description"][:150],
+                "published": a["published_at"][:10]
+            }
+            for a in articles
+        ]
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
