@@ -129,7 +129,7 @@ def summarize():
 @app.route("/api/blog-feed")
 def blog_feed():
     try:
-        username = "Mads Stoumann"  # user name here
+        username = "madsstoumann"  # user name here
         url = f"https://dev.to/api/articles?username={username}&per_page=6"
         response = requests.get(url)
         response.raise_for_status()
