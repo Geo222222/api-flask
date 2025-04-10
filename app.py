@@ -3,6 +3,7 @@ import requests
 from flask_cors import CORS
 import os
 
+
 app = Flask(__name__)
 CORS(app)
 
@@ -19,7 +20,7 @@ def get_tech_news():
 
     url = "https://newsapi.org/v2/top-headlines"
     params = {
-        "category": "technology",
+        "category": "fintech",
         "language": "en",
         "pageSize": 5,
         "apiKey": NEWS_API_KEY
@@ -116,7 +117,6 @@ def summarize():
         api_url = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
         headers = {}  # No token, anonymous access
         payload = {"inputs": text[:1024]}  # truncate for model input size
-
         response = requests.post(api_url, headers=headers, json=payload)
         response.raise_for_status()
 
